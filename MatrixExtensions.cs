@@ -47,6 +47,11 @@ namespace MatrixExtensions
                   "Возвращает вектор уникальных значений, содержащихся в ('матрица').",
                   FunctionSections.MatricesAndVectors, true,
                   new ArgumentInfo(ArgumentSections.Matrix)),
+                                     
+                  new TermInfo("listSortAsText", TermType.Function,
+                  "Возвращает сортированный вектор значений, содержащихся в ('матрица').",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix)),
                                     
                   new TermInfo("listLength", TermType.Function,
                   "Возвращает длину вектора ('вектор').",
@@ -151,6 +156,32 @@ namespace MatrixExtensions
             answer.AddRange(TermsConverter.ToTerms(distinct.Count.ToString()));
             answer.AddRange(TermsConverter.ToTerms(1.ToString()));
             answer.Add(new Term(Functions.Mat, TermType.Function, 2 + distinct.Count));
+
+            result = Entry.Create(answer.ToArray());
+            return true;
+         }
+         
+         //listSort
+         if (value.Type == TermType.Function && value.ArgsCount == 1 && value.Text == "listSortAsText")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+
+            TNumber tmp = Computation.NumericCalculation(arg1, context);
+
+            List<string> vector = new List<string>(Utilites.EntryMatrix2ArrStr(tmp.obj));
+            vector.RemoveAt(vector.Count - 1);
+            vector.RemoveAt(vector.Count - 1);
+            vector.Sort();
+
+            List<Term> answer = new List<Term>();
+            foreach (string item in vector)
+            {
+               answer.AddRange(TermsConverter.ToTerms(item));
+            }
+
+            answer.AddRange(TermsConverter.ToTerms(vector.Count.ToString()));
+            answer.AddRange(TermsConverter.ToTerms(1.ToString()));
+            answer.Add(new Term(Functions.Mat, TermType.Function, 2 + vector.Count));
 
             result = Entry.Create(answer.ToArray());
             return true;
