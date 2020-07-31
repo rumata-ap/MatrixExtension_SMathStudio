@@ -63,11 +63,11 @@ namespace MatrixExtensions
                   FunctionSections.MatricesAndVectors, true,
                   new ArgumentInfo(ArgumentSections.Matrix)),
 
-                  new TermInfo("listDistinct", TermType.Function,
-                  "Возвращает вектор или вектор-строку уникальных значений, содержащихся в ('матрица'), а" +
-                  " ('число') указывает на вид возвращаемого вектора: 0 - вектор; 1 - вектор-строка.",
-                  FunctionSections.MatricesAndVectors, true,
-                  new ArgumentInfo(ArgumentSections.Matrix), new ArgumentInfo(ArgumentSections.RealNumber)),
+                  //new TermInfo("listDistinct", TermType.Function,
+                  //"Возвращает вектор или вектор-строку уникальных значений, содержащихся в ('матрица'), а" +
+                  //" ('число') указывает на вид возвращаемого вектора: 0 - вектор; 1 - вектор-строка.",
+                  //FunctionSections.MatricesAndVectors, true,
+                  //new ArgumentInfo(ArgumentSections.Matrix), new ArgumentInfo(ArgumentSections.RealNumber)),
                   
                   new TermInfo("listAdd", TermType.Function,
                   "Добавление нового значения ('аргумент') в конец вектора ('вектор').",
@@ -224,37 +224,27 @@ namespace MatrixExtensions
             Entry arg1 = Computation.Preprocessing(value.Items[0], context);
             Entry arg2 = Computation.Preprocessing(value.Items[1], context);
 
-            List<string> v = new List<string>(Utilites.EntryMatrix2ArrStr(arg1));
-            List<string> vector = new List<string>(3);
-            TNumber tmp;
-            TNumber tmp1 = Computation.NumericCalculation(arg2, context);
-            if (v.Count > 2)
+            TNumber tmp, tmp1;
+            TMatrix m;
+            try
             {
                tmp = Computation.NumericCalculation(arg1, context);
-               vector = new List<string>(Utilites.EntryMatrix2ArrStr(tmp.obj));
-               vector.RemoveAt(vector.Count - 1);
-               vector.RemoveAt(vector.Count - 1);
-               vector.Add(tmp1.obj.ToString());
+               tmp1 = Computation.NumericCalculation(arg2, context);
+               TNumber count = tmp.Rows();
+               m = tmp.Stack(new TNumber[] { new TNumber(0, 1) });
+               m[count.ToInt32(), 0] = tmp1;
+               
             }
-            else if (v.Count == 2)
+            catch
             {
-               vector.Add(tmp1.obj.ToString());
-               //vector.Add(v[0]);
-               //vector.Add(v[1]);
-            }
-            
-
-            List<Term> answer = new List<Term>();
-            foreach (string item in vector)
-            {
-               answer.AddRange(TermsConverter.ToTerms(item));
+               tmp1 = Computation.NumericCalculation(arg2, context);
+               m = new TMatrix(0);
+               m[0, 0] = tmp1;
             }
 
-            answer.AddRange(TermsConverter.ToTerms(vector.Count.ToString()));
-            answer.AddRange(TermsConverter.ToTerms(1.ToString()));
-            answer.Add(new Term(Functions.Mat, TermType.Function, 2 + vector.Count));
-
+            List<Term> answer = new List<Term>(m.ToTerms());
             result = Entry.Create(answer.ToArray());
+
             return true;
          }
 
@@ -286,43 +276,43 @@ namespace MatrixExtensions
             return true;
          }
 
-         if (value.Type == TermType.Function && value.ArgsCount == 2 && value.Text == "listDistinct")
-         {
-            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
-            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+         //if (value.Type == TermType.Function && value.ArgsCount == 2 && value.Text == "listDistinct")
+         //{
+         //   Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+         //   Entry arg2 = Computation.Preprocessing(value.Items[1], context);
             
-            int dir = Utilites.Entry2Int(arg2);
-            TNumber tmp = Computation.NumericCalculation(arg1, context);
+         //   int dir = Utilites.Entry2Int(arg2);
+         //   TNumber tmp = Computation.NumericCalculation(arg1, context);
 
-            List<string> vector = new List<string>(Utilites.EntryMatrix2ArrStr(tmp.obj));
-            vector.RemoveAt(vector.Count - 1);
-            vector.RemoveAt(vector.Count - 1);
-            List<string> distinct = vector.Distinct().ToList();
+         //   List<string> vector = new List<string>(Utilites.EntryMatrix2ArrStr(tmp.obj));
+         //   vector.RemoveAt(vector.Count - 1);
+         //   vector.RemoveAt(vector.Count - 1);
+         //   List<string> distinct = vector.Distinct().ToList();
 
-            //string res = "null";
+         //   //string res = "null";
 
-            List<Term> answer = new List<Term>();
-            foreach (string item in distinct)
-            {
-               answer.AddRange(TermsConverter.ToTerms(item));
-            }
+         //   List<Term> answer = new List<Term>();
+         //   foreach (string item in distinct)
+         //   {
+         //      answer.AddRange(TermsConverter.ToTerms(item));
+         //   }
 
-            if (dir==0)
-            {
-               answer.AddRange(TermsConverter.ToTerms(distinct.Count.ToString()));
-               answer.AddRange(TermsConverter.ToTerms(1.ToString()));
-               answer.Add(new Term(Functions.Mat, TermType.Function, 2 + distinct.Count));
-            }
-            else
-            {             
-               answer.AddRange(TermsConverter.ToTerms(1.ToString()));
-               answer.AddRange(TermsConverter.ToTerms(distinct.Count.ToString()));
-               answer.Add(new Term(Functions.Mat, TermType.Function, 2 + distinct.Count));
-            }
+         //   if (dir==0)
+         //   {
+         //      answer.AddRange(TermsConverter.ToTerms(distinct.Count.ToString()));
+         //      answer.AddRange(TermsConverter.ToTerms(1.ToString()));
+         //      answer.Add(new Term(Functions.Mat, TermType.Function, 2 + distinct.Count));
+         //   }
+         //   else
+         //   {             
+         //      answer.AddRange(TermsConverter.ToTerms(1.ToString()));
+         //      answer.AddRange(TermsConverter.ToTerms(distinct.Count.ToString()));
+         //      answer.Add(new Term(Functions.Mat, TermType.Function, 2 + distinct.Count));
+         //   }
 
-            result = Entry.Create(answer.ToArray());
-            return true;
-         }
+         //   result = Entry.Create(answer.ToArray());
+         //   return true;
+         //}
 
          if (value.Type == TermType.Function && value.ArgsCount == 2 && value.Text == "listRemoveAt")
          {
