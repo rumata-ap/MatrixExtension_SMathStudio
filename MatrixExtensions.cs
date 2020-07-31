@@ -74,17 +74,17 @@ namespace MatrixExtensions
                   FunctionSections.MatricesAndVectors, true,
                   new ArgumentInfo(ArgumentSections.ColumnVector), new ArgumentInfo(ArgumentSections.Default)),
                   
-                  new TermInfo("listInsertAt", TermType.Function,
+                  new TermInfo("listInsert", TermType.Function,
                   "Добавление нового значения ('аргумент') в вектор ('вектор') по указанному индексу ('число').",
                   FunctionSections.MatricesAndVectors, true,
                   new ArgumentInfo(ArgumentSections.ColumnVector), new ArgumentInfo(ArgumentSections.Default), 
                   new ArgumentInfo(ArgumentSections.RealNumber)),
                                     
                   new TermInfo("listInsertRange", TermType.Function,
-                  "Добавление нового диапазона значений ('2:вектор') в вектор ('1:вектор') по указанному индексу ('число').",
+                  "Добавление нового диапазона значений ('3:вектор') в вектор ('1:вектор') по указанному индексу ('число').",
                   FunctionSections.MatricesAndVectors, true,
-                  new ArgumentInfo(ArgumentSections.ColumnVector), new ArgumentInfo(ArgumentSections.ColumnVector), 
-                  new ArgumentInfo(ArgumentSections.RealNumber)),
+                  new ArgumentInfo(ArgumentSections.ColumnVector), new ArgumentInfo(ArgumentSections.RealNumber), 
+                  new ArgumentInfo(ArgumentSections.ColumnVector)),
                                     
                   new TermInfo("listRemoveAt", TermType.Function,
                   "Удаление элемента вектора ('вектор') по указанному индексу ('число').",
@@ -377,6 +377,83 @@ namespace MatrixExtensions
                vector.RemoveAt(vector.Count - 1);
                vector.RemoveAt(vector.Count - 1);
                vector.RemoveRange((int)be2.ToDouble() - 1, (int)be3.ToDouble());
+            }
+
+            List<Term> answer = new List<Term>();
+            foreach (string item in vector)
+            {
+               answer.AddRange(TermsConverter.ToTerms(item));
+            }
+
+            answer.AddRange(TermsConverter.ToTerms(vector.Count.ToString()));
+            answer.AddRange(TermsConverter.ToTerms(1.ToString()));
+            answer.Add(new Term(Functions.Mat, TermType.Function, 2 + vector.Count));
+
+            result = Entry.Create(answer.ToArray());
+            return true;
+         }
+
+
+         if (value.Type == TermType.Function && value.ArgsCount == 3 && value.Text == "listInsert")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+            Entry arg3 = Computation.Preprocessing(value.Items[2], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+            TNumber tmp3 = Computation.NumericCalculation(arg3, context);
+
+            BaseEntry be1 = tmp1.obj;
+            BaseEntry be2 = tmp2.obj;
+            BaseEntry be3 = tmp3.obj;
+
+            List<string> vector = new List<string>(Utilites.EntryMatrix2ArrStr(be1));
+
+            if (be1.Type == BaseEntryType.Matrix)
+            {
+               vector.RemoveAt(vector.Count - 1);
+               vector.RemoveAt(vector.Count - 1);
+               vector.Insert((int)be2.ToDouble() - 1, be3.ToString());
+            }
+
+            List<Term> answer = new List<Term>();
+            foreach (string item in vector)
+            {
+               answer.AddRange(TermsConverter.ToTerms(item));
+            }
+
+            answer.AddRange(TermsConverter.ToTerms(vector.Count.ToString()));
+            answer.AddRange(TermsConverter.ToTerms(1.ToString()));
+            answer.Add(new Term(Functions.Mat, TermType.Function, 2 + vector.Count));
+
+            result = Entry.Create(answer.ToArray());
+            return true;
+         }
+
+         if (value.Type == TermType.Function && value.ArgsCount == 3 && value.Text == "listInsertRange")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+            Entry arg3 = Computation.Preprocessing(value.Items[2], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+            TNumber tmp3 = Computation.NumericCalculation(arg3, context);
+
+            BaseEntry be1 = tmp1.obj;
+            BaseEntry be2 = tmp2.obj;
+            BaseEntry be3 = tmp3.obj;
+
+            List<string> vector = new List<string>(Utilites.EntryMatrix2ArrStr(be1));
+            List<string> vector1 = new List<string>(Utilites.EntryMatrix2ArrStr(be3));
+            if (be1.Type == BaseEntryType.Matrix)
+            {
+               vector.RemoveAt(vector.Count - 1);
+               vector.RemoveAt(vector.Count - 1);
+               vector1.RemoveAt(vector.Count - 1);
+               vector1.RemoveAt(vector.Count - 1);
+               vector.InsertRange((int)be2.ToDouble() - 1, vector1);
             }
 
             List<Term> answer = new List<Term>();
