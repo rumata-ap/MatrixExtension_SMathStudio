@@ -12,6 +12,49 @@ namespace MatrixExtensions
       T init;
       int r;
       int c;
+      public int R
+      {
+         get
+         {
+            if (r > 0)
+               return r;
+            else
+               return -1;
+         }
+      }
+      public int C
+      {
+         get
+         {
+            if (c > 0)
+               return c;
+            else
+               return -1;
+         }
+      }
+      public T this[int i, int j]
+      {
+         get
+         {
+            if (r > 0 && c > 0)
+               if (i > -1 && j > -1)
+                  return src[i] [j];
+               else
+                  throw new ArgumentException("Неверный задана индексация");
+            else
+               throw new ArgumentException("Не задана матрица");
+         }
+         set
+         {
+            if (r > 0 && c > 0)
+               if (i > -1 && j > -1)
+                  src[i][j] = value;
+               else
+                  throw new ArgumentException("Неверный задана индексация");
+            else
+               throw new ArgumentException("Не задана матрица");
+         }
+      }
 
       public MatrixL(int r, int c, T initValue)
       {
@@ -29,90 +72,125 @@ namespace MatrixExtensions
          }
       }
 
-      public T GetEl(int idxR, int idxC)
+      /// <summary>
+      ///Извлечение строки по указанному индексу.
+      /// </summary>
+      /// <param name="idxR">Индекс строки для извлечения.</param>
+      /// <returns></returns>
+      public List<T> Row (int idxR)
       {
-         return src[idxR][idxC];
+         if (r == 0 || idxR < 0 || idxR > r) throw new ArgumentException("Матрица пустая либо не верно указан индекс строки.");
+
+         return src[idxR];
       }
 
-      public void SetEl(int idxR, int idxC, T el)
+      /// <summary>
+      /// Извлечение столбца по указанному индексу.
+      /// </summary>
+      /// <param name="idxC">Индекс столбца для извлечения.</param>
+      /// <returns></returns>
+      public List<T> Col (int idxC)
       {
-         src[idxR][idxC] = el;
+         if (c == 0 || idxC < 0 || idxC > c) throw new ArgumentException("Матрица пустая либо не верно указан индекс столбца.");
+         
+         List<T> res = new List<T>(r);
+         foreach (List<T> item in src) res.Add(item[idxC]);
+
+         return res;
       }
 
+      /// <summary>
+      /// Вставка строки со значениями по умолчанию по указанному индексу.
+      /// </summary>
+      /// <param name="idxR"> Индекс строки для вставки.</param>
       public void InsertRow(int idxR)
       {
-         if (idxR > r) return;
+         if (r == 0 || idxR < 0 || idxR > r) throw new ArgumentException("Матрица пустая либо не верно указан индекс строки для вставки.");
 
          src.Insert(idxR, new List<T>(c));
          r++;
-         for (int i = 0; i < c; i++)
-         {
-            src[idxR].Add(init);
-         }
+         for (int i = 0; i < c; i++) src[idxR].Add(init);
       }
 
+      /// <summary>
+      /// Вставка строки по указанному индексу.
+      /// </summary>
+      /// <param name="idxR">Индекс строки для вставки.</param>
+      /// <param name="row">Список значений элементов строки</param>
       public void InsertRow(int idxR, List<T> row)
       {
-         if (idxR > r) return;
+         if (r == 0 || idxR < 0 || idxR > r) throw new ArgumentException("Матрица пустая либо не верно указан индекс строки для вставки.");
 
          src.Insert(idxR, new List<T>(c));
          r++;
          int n = c;
          if (row.Count < c) n = row.Count;
 
-         for (int i = 0; i < n; i++)
-         {
-            src[idxR].Add(row[i]);
-         }
+         for (int i = 0; i < n; i++) src[idxR].Add(row[i]);
 
          if (row.Count < c)
          {
-            for (int i = n; i < c; i++)
-            {
-               src[idxR].Add(init);
-            }
+            for (int i = n; i < c; i++) src[idxR].Add(init);
          }
       }
-      
+
+      /// <summary>
+      /// Вставка столбца со значениями по умолчанию по указанному индексу.
+      /// </summary>
+      /// <param name="idxС"> Индекс столбца для вставки.</param>
       public void InsertCol(int idxC)
       {
-         if (idxC > c) return;
+         if (c == 0 || idxC < 0 || idxC > c) throw new ArgumentException("Матрица пустая либо не верно указан индекс столбца для вставки.");
 
          c++;
-         for (int i = 0; i < r; i++)
-         {
-            src[i].Insert(idxC, init);
-         }
+         for (int i = 0; i < r; i++) src[i].Insert(idxC, init);
       }
 
+      /// <summary>
+      /// Вставка столбца по указанному индексу.
+      /// </summary>
+      /// <param name="idxC">Индекс столбца для вставки.</param>
+      /// <param name="col">Список значений элементов столбца</param>
       public void InsertCol(int idxC, List<T> col)
       {
-         if (idxC > c) return;
+         if (c == 0 || idxC < 0 || idxC > c) throw new ArgumentException("Матрица пустая либо не верно указан индекс столбца для вставки.");
 
          c++;
-         for (int i = 0; i < r; i++)
-         {
-            src[i].Insert(idxC, init);
-         }
+         for (int i = 0; i < r; i++) src[i].Insert(idxC, init);
 
          int n = r;
          if (col.Count < r) n = col.Count;
 
          foreach (List<T> item in src)
          {
-            for (int i = 0; i < n; i++)
-            {
-               item.Insert(idxC, col[i]);
-            }
+            for (int i = 0; i < n; i++) item[i] = col[i];
+
             if (col.Count < r)
             {
-               for (int i = n; i < r; i++)
-               {
-                  item.Insert(idxC, init);
-               }
+               for (int i = n; i < r; i++) item[i] = init;
             }
          }
       }
 
+
+      public void RemoteRowAt(int idxR)
+      {
+         if (r > 0 && idxR >= 0 && idxR <= r) { src.RemoveAt(idxR); r--; }
+         else throw new ArgumentException("Матрица пустая либо не верно указан индекс строки для удаления.");
+      }
+
+
+      public void RemoteColAt(int idxC)
+      {
+         if (c > 0 && idxC >= 0 && idxC<=c)
+         {
+            foreach (List<T> item in src)
+            {
+               item.RemoveAt(idxC);
+               c--;
+            }
+         }
+         else throw new ArgumentException("Матрица пустая либо не верно указан индекс столбца для удаления.");
+      }
    }
 }
