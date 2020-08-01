@@ -166,12 +166,8 @@ namespace MatrixExtensions
             for (int j = 0; j < r; j++)
             {
                //src[j].Insert(idxC, col[i]);
-               src[j][idxC] = col[i];
-               if (col.Count < r)
-               {
-                  //src[j].Insert(idxC, init);
-                  src[j][idxC] = col[i];
-               }
+               if (j >= n) continue;
+               src[j][idxC] = col[i];              
             }
          }
       }

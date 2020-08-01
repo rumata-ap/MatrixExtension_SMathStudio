@@ -491,7 +491,7 @@ namespace MatrixExtensions
             MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
             matrixL.InsertRow(tmp2.ToInt32()-1);
             TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
-            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+
             result = Entry.Create(m.ToTerms());
             return true;
          }
@@ -510,7 +510,7 @@ namespace MatrixExtensions
             List<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp3).ToList();
             matrixL.InsertRow(tmp2.ToInt32() - 1, vectorL);
             TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
-            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+
             result = Entry.Create(m.ToTerms());
             return true;
          }
@@ -526,7 +526,7 @@ namespace MatrixExtensions
             MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
             matrixL.InsertCol(tmp2.ToInt32()-1);
             TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
-            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+
             result = Entry.Create(m.ToTerms());
             return true;
          }
@@ -545,7 +545,7 @@ namespace MatrixExtensions
             List<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp3).ToList();
             matrixL.InsertCol(tmp2.ToInt32() - 1, vectorL);
             TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
-            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+
             result = Entry.Create(m.ToTerms());
             return true;
          }
