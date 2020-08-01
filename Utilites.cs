@@ -51,5 +51,37 @@ namespace MatrixExtensions
          string source = prime.ToString();
          return Convert.ToInt32(source);
       }
+
+      internal static MatrixL<TNumber> TMatrixToMatrixL(TNumber src)
+      {
+         if (src.obj.Type != BaseEntryType.Matrix) return null;
+         int r = src.Rows().ToInt32();
+         int c = src.Cols().ToInt32();
+         MatrixL<TNumber> res = new MatrixL<TNumber>(r, c, new TNumber(0,1));
+         TMatrix matrix = (TMatrix)src.obj;
+         for (int i = 0; i < r; i++)
+         {
+            for (int j = 0; j < c; j++)
+            {
+               res[i, j] = matrix[i, j];
+            }
+         }
+
+         return res;
+      }
+
+      internal static TMatrix MatrixLToTMatrix(MatrixL<TNumber> src)
+      {
+         TMatrix res = new TMatrix(new TNumber[src.R, src.C]);
+         for (int i = 0; i < src.R; i++)
+         {
+            for (int j = 0; j < src.C; j++)
+            {
+               res[i, j] = src[i, j];
+            }
+         }
+
+         return res;
+      }
    }
 }

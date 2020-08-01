@@ -161,13 +161,17 @@ namespace MatrixExtensions
          int n = r;
          if (col.Count < r) n = col.Count;
 
-         foreach (List<T> item in src)
+         for (int i = 0; i < n; i++)
          {
-            for (int i = 0; i < n; i++) item[i] = col[i];
-
-            if (col.Count < r)
+            for (int j = 0; j < r; j++)
             {
-               for (int i = n; i < r; i++) item[i] = init;
+               //src[j].Insert(idxC, col[i]);
+               src[j][idxC] = col[i];
+               if (col.Count < r)
+               {
+                  //src[j].Insert(idxC, init);
+                  src[j][idxC] = col[i];
+               }
             }
          }
       }
@@ -191,6 +195,20 @@ namespace MatrixExtensions
             }
          }
          else throw new ArgumentException("Матрица пустая либо не верно указан индекс столбца для удаления.");
+      }
+
+      public List<T> ToList()
+      {
+         List<T> res = new List<T>(r * c);
+         for (int i = 0; i < r; i++)
+         {
+            for (int j = 0; j < c; j++)
+            {
+               res.Add(src[i][j]);
+            }
+         }
+
+         return res;
       }
    }
 }

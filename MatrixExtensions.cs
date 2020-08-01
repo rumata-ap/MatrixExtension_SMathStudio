@@ -97,6 +97,28 @@ namespace MatrixExtensions
                   new ArgumentInfo(ArgumentSections.ColumnVector), new ArgumentInfo(ArgumentSections.RealNumber), 
                   new ArgumentInfo(ArgumentSections.RealNumber)),
 
+                  new TermInfo("matrixRInsert", TermType.Function,
+                  "Вставка нулевой строки в матрицу ('матрица') по указанному индексу ('число').",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix), new ArgumentInfo(ArgumentSections.RealNumber)),
+
+                  new TermInfo("matrixRInsert", TermType.Function,
+                  "Вставка строки в матрицу ('1:матрица') по указанному индексу ('число') из вектора ('3:матрица').",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix), new ArgumentInfo(ArgumentSections.RealNumber),
+                  new ArgumentInfo(ArgumentSections.Matrix)),
+                  
+                  new TermInfo("matrixCInsert", TermType.Function,
+                  "Вставка нулевого столбца в матрицу ('матрица') по указанному индексу ('число').",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix), new ArgumentInfo(ArgumentSections.RealNumber)),
+
+                  new TermInfo("matrixCInsert", TermType.Function,
+                  "Вставка столбца в матрицу ('1:матрица') по указанному индексу ('число') из вектора ('3:матрица').",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix), new ArgumentInfo(ArgumentSections.RealNumber),
+                  new ArgumentInfo(ArgumentSections.Matrix)),
+
                   };
       }
 
@@ -242,8 +264,7 @@ namespace MatrixExtensions
                m[0, 0] = tmp1;
             }
 
-            List<Term> answer = new List<Term>(m.ToTerms());
-            result = Entry.Create(answer.ToArray());
+            result = Entry.Create(m.ToTerms());
 
             return true;
          }
@@ -383,7 +404,6 @@ namespace MatrixExtensions
             return true;
          }
 
-
          if (value.Type == TermType.Function && value.ArgsCount == 3 && value.Text == "listInsert")
          {
             Entry arg1 = Computation.Preprocessing(value.Items[0], context);
@@ -457,6 +477,76 @@ namespace MatrixExtensions
             answer.Add(new Term(Functions.Mat, TermType.Function, 2 + vector.Count));
 
             result = Entry.Create(answer.ToArray());
+            return true;
+         }
+
+         if (value.Type == TermType.Function && value.ArgsCount == 2 && value.Text == "matrixRInsert")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+
+            MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
+            matrixL.InsertRow(tmp2.ToInt32()-1);
+            TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
+            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+            result = Entry.Create(m.ToTerms());
+            return true;
+         }
+
+         if (value.Type == TermType.Function && value.ArgsCount == 3 && value.Text == "matrixRInsert")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+            Entry arg3 = Computation.Preprocessing(value.Items[2], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+            TNumber tmp3 = Computation.NumericCalculation(arg3, context);
+
+            MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
+            List<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp3).ToList();
+            matrixL.InsertRow(tmp2.ToInt32() - 1, vectorL);
+            TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
+            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+            result = Entry.Create(m.ToTerms());
+            return true;
+         }
+         
+         if (value.Type == TermType.Function && value.ArgsCount == 2 && value.Text == "matrixCInsert")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+
+            MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
+            matrixL.InsertCol(tmp2.ToInt32()-1);
+            TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
+            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+            result = Entry.Create(m.ToTerms());
+            return true;
+         }
+
+         if (value.Type == TermType.Function && value.ArgsCount == 3 && value.Text == "matrixCInsert")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+            Entry arg3 = Computation.Preprocessing(value.Items[2], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+            TNumber tmp3 = Computation.NumericCalculation(arg3, context);
+
+            MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
+            List<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp3).ToList();
+            matrixL.InsertCol(tmp2.ToInt32() - 1, vectorL);
+            TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
+            //MatrixL<TNumber> vectorL = Utilites.TMatrixToMatrixL(tmp2);
+            result = Entry.Create(m.ToTerms());
             return true;
          }
 
