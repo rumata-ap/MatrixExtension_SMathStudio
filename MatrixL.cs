@@ -173,22 +173,22 @@ namespace MatrixExtensions
       }
 
 
-      public void RemoteRowAt(int idxR)
+      public void RemoveRowAt(int idxR)
       {
          if (r > 0 && idxR >= 0 && idxR <= r) { src.RemoveAt(idxR); r--; }
          else throw new ArgumentException("Матрица пустая либо не верно указан индекс строки для удаления.");
       }
 
 
-      public void RemoteColAt(int idxC)
+      public void RemoveColAt(int idxC)
       {
          if (c > 0 && idxC >= 0 && idxC<=c)
-         {
+         {          
             foreach (List<T> item in src)
             {
-               item.RemoveAt(idxC);
-               c--;
+               item.RemoveAt(idxC);               
             }
+            c--;
          }
          else throw new ArgumentException("Матрица пустая либо не верно указан индекс столбца для удаления.");
       }
@@ -206,5 +206,6 @@ namespace MatrixExtensions
 
          return res;
       }
+
    }
 }

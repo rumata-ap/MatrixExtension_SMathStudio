@@ -80,7 +80,6 @@ namespace MatrixExtensions
                res[i, j] = src[i, j];
             }
          }
-
          return res;
       }
    }
