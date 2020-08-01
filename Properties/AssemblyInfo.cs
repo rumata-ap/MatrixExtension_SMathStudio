@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MatrixExtensions")]
 [assembly: AssemblyDescription("Сustom functions for working with matrices")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Aleksandr Ponomarev")]
+[assembly: AssemblyCompany("Aleksandr Ponomarev (https://t.me/smathru)")]
 [assembly: AssemblyProduct("MatrixExtensions")]
 [assembly: AssemblyCopyright("Copyright ©  2020 SMathStudio")]
 [assembly: AssemblyTrademark("")]
