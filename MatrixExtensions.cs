@@ -132,6 +132,36 @@ namespace MatrixExtensions
                   FunctionSections.MatricesAndVectors, true,
                   new ArgumentInfo(ArgumentSections.Matrix), new ArgumentInfo(ArgumentSections.RealNumber),
                   new ArgumentInfo(ArgumentSections.RealNumber)),
+                  
+                  new TermInfo("nonZerosRows", TermType.Function,
+                  "Удаление нулевых строк из матрицы ('матрица').",
+
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix)),
+                                    
+                  new TermInfo("nonZerosCols", TermType.Function,
+                  "Удаление нулевых столбцов из матрицы ('матрица').",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix)),
+                                                      
+                  new TermInfo("nonZerosRowsCols", TermType.Function,
+                  "Удаление нулевых строк и столбцов из матрицы ('матрица').",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix)),
+                                                                        
+                  new TermInfo("putMatrix", TermType.Function,
+                  "Вставка матрицы ('2:матрица') в исходную матрицу ('1:матрица') по указанным индексам строки ('3:число')" +
+                  " и столбца ('4:число') с заменой элементов исходной матрицы.",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix),new ArgumentInfo(ArgumentSections.Matrix),
+                  new ArgumentInfo(ArgumentSections.RealNumber),new ArgumentInfo(ArgumentSections.RealNumber)),
+                                                                                          
+                  new TermInfo("insertMatrix", TermType.Function,
+                  "Вставка матрицы ('2:матрица') в исходную матрицу ('1:матрица') по указанным индексам строки ('3:число')" +
+                  " и столбца ('4:число') с изменеием размерности исходной матрицы.",
+                  FunctionSections.MatricesAndVectors, true,
+                  new ArgumentInfo(ArgumentSections.Matrix),new ArgumentInfo(ArgumentSections.Matrix),
+                  new ArgumentInfo(ArgumentSections.RealNumber),new ArgumentInfo(ArgumentSections.RealNumber)),
 
                   };
       }
@@ -604,6 +634,270 @@ namespace MatrixExtensions
             TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
 
             result = Entry.Create(m.ToTerms());
+            return true;
+         }
+         
+
+         if (value.Type == TermType.Function && value.ArgsCount == 1 && value.Text == "nonZerosRows")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+
+            MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
+            List<int> indexes = new List<int>(matrixL.R);
+            List<TNumber> row;
+            List<double> rowD;
+            int j = 0;
+            for (int i = 0; i < matrixL.R; i++)
+            {
+               row = matrixL.Row(i);
+               rowD = new List<double>(matrixL.C);
+               foreach (TNumber item in row)
+               {
+                  if (item.obj.Type != BaseEntryType.Double) break;
+                  //if (item.obj.ToDouble() != 0) break;
+                  try
+                  {
+                     rowD.Add(item.obj.ToDouble());
+                  }
+                  catch
+                  {
+                     break;
+                  }
+               }
+               rowD = rowD.Distinct().ToList();
+               if (rowD.Count==1 && rowD[0]==0)
+               {
+                  indexes.Add(i - j);
+                  j++;
+               }
+            }
+            if (indexes.Count > 0)
+            {
+               foreach (int item in indexes)
+               {
+                  matrixL.RemoveRowAt(item);
+               }
+            }
+            TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
+
+            result = Entry.Create(m.ToTerms());
+            return true;
+         }
+         
+         if (value.Type == TermType.Function && value.ArgsCount == 1 && value.Text == "nonZerosRowsCols")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+
+            MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
+            List<int> indexes = new List<int>(matrixL.R);
+            List<TNumber> row;
+            List<double> rowD;
+            int j = 0;
+            for (int i = 0; i < matrixL.R; i++)
+            {
+               row = matrixL.Row(i);
+               rowD = new List<double>(matrixL.C);
+               foreach (TNumber item in row)
+               {
+                  if (item.obj.Type != BaseEntryType.Double) break;
+                  //if (item.obj.ToDouble() != 0) break;
+                  try
+                  {
+                     rowD.Add(item.obj.ToDouble());
+                  }
+                  catch
+                  {
+                     break;
+                  }
+               }
+               rowD = rowD.Distinct().ToList();
+               if (rowD.Count == 1 && rowD[0] == 0)
+               {
+                  indexes.Add(i - j);
+                  j++;
+               }
+            }
+            if (indexes.Count > 0)
+            {
+               foreach (int item in indexes)
+               {
+                  matrixL.RemoveRowAt(item);
+               }
+            }
+
+            indexes = new List<int>(matrixL.C);
+            List<TNumber> col;
+            List<double> colD;
+            j = 0;
+            for (int i = 0; i < matrixL.C; i++)
+            {
+               col = matrixL.Col(i);
+               colD = new List<double>(matrixL.R);
+               foreach (TNumber item in col)
+               {
+                  if (item.obj.Type != BaseEntryType.Double) break;
+                  //if (item.obj.ToDouble() != 0) break;
+                  try
+                  {
+                     colD.Add(item.obj.ToDouble());
+                  }
+                  catch
+                  {
+                     break;
+                  }
+               }
+               colD = colD.Distinct().ToList();
+               if (colD.Count==1 && colD[0]==0)
+               {
+                  indexes.Add(i - j);
+                  j++;
+               }
+            }
+            if (indexes.Count > 0)
+            {
+               foreach (int item in indexes)
+               {
+                  matrixL.RemoveColAt(item);
+               }
+            }
+            TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
+
+            result = Entry.Create(m.ToTerms());
+            return true;
+         }
+                  
+         if (value.Type == TermType.Function && value.ArgsCount == 1 && value.Text == "nonZerosCols")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+
+            MatrixL<TNumber> matrixL = Utilites.TMatrixToMatrixL(tmp1);
+            List<int> indexes = new List<int>(matrixL.C);
+            List<TNumber> col;
+            List<double> colD;
+            int j = 0;
+            for (int i = 0; i < matrixL.C; i++)
+            {
+               col = matrixL.Col(i);
+               colD = new List<double>(matrixL.R);
+               foreach (TNumber item in col)
+               {
+                  if (item.obj.Type != BaseEntryType.Double) break;
+                  //if (item.obj.ToDouble() != 0) break;
+                  try
+                  {
+                     colD.Add(item.obj.ToDouble());
+                  }
+                  catch
+                  {
+                     break;
+                  }
+               }
+               colD = colD.Distinct().ToList();
+               if (colD.Count==1 && colD[0]==0)
+               {
+                  indexes.Add(i - j);
+                  j++;
+               }
+            }
+            if (indexes.Count > 0)
+            {
+               foreach (int item in indexes)
+               {
+                  matrixL.RemoveColAt(item);
+               }
+            }
+            TMatrix m = Utilites.MatrixLToTMatrix(matrixL);
+
+            result = Entry.Create(m.ToTerms());
+            return true;
+         }
+
+
+         if (value.Type == TermType.Function && value.ArgsCount == 4 && value.Text == "putMatrix")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+            Entry arg3 = Computation.Preprocessing(value.Items[2], context);
+            Entry arg4 = Computation.Preprocessing(value.Items[3], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+            TNumber tmp3 = Computation.NumericCalculation(arg3, context);
+            TNumber tmp4 = Computation.NumericCalculation(arg4, context);
+
+            if (tmp3.ToInt32() < 1 || tmp4.ToInt32() < 1) throw new ArgumentException("Неверно задана индексация");
+                 
+            int adressR = tmp3.ToInt32() - 1;
+            int adressC = tmp4.ToInt32() - 1;
+
+            MatrixL<TNumber> matrixL1 = Utilites.TMatrixToMatrixL(tmp1);
+            MatrixL<TNumber> matrixL2 = Utilites.TMatrixToMatrixL(tmp2);
+
+            int n = matrixL1.R - adressR;
+            int m = matrixL1.C - adressC;
+            if (n > matrixL2.R) n = matrixL2.R;
+            if (m > matrixL2.C) m = matrixL2.C;
+
+            for (int i = 0; i < n; i++)
+            {
+               for (int j = 0; j < m; j++)
+               {
+                  matrixL1[adressR + i, adressC + j] = matrixL2[i, j];
+               }
+            }
+
+            TMatrix mat = Utilites.MatrixLToTMatrix(matrixL1);
+
+            result = Entry.Create(mat.ToTerms());
+            return true;
+         }
+         
+
+         if (value.Type == TermType.Function && value.ArgsCount == 4 && value.Text == "insertMatrix")
+         {
+            Entry arg1 = Computation.Preprocessing(value.Items[0], context);
+            Entry arg2 = Computation.Preprocessing(value.Items[1], context);
+            Entry arg3 = Computation.Preprocessing(value.Items[2], context);
+            Entry arg4 = Computation.Preprocessing(value.Items[3], context);
+
+            TNumber tmp1 = Computation.NumericCalculation(arg1, context);
+            TNumber tmp2 = Computation.NumericCalculation(arg2, context);
+            TNumber tmp3 = Computation.NumericCalculation(arg3, context);
+            TNumber tmp4 = Computation.NumericCalculation(arg4, context);
+
+            if (tmp3.ToInt32() < 1 || tmp4.ToInt32() < 1) throw new ArgumentException("Неверно задана индексация");
+
+            int adressR = tmp3.ToInt32() - 1;
+            int adressC = tmp4.ToInt32() - 1;
+
+            MatrixL<TNumber> matrixL1 = Utilites.TMatrixToMatrixL(tmp1);
+            MatrixL<TNumber> matrixL2 = Utilites.TMatrixToMatrixL(tmp2);
+
+            for (int i = 0; i < matrixL2.R; i++) matrixL1.InsertRow(adressR);
+            for (int i = 0; i < matrixL2.C; i++) matrixL1.InsertCol(adressC);
+
+            int n = matrixL1.R - adressR;
+            int m = matrixL1.C - adressC;
+            if (n > matrixL2.R) n = matrixL2.R;
+            if (m > matrixL2.C) m = matrixL2.C;
+
+            for (int i = 0; i < n; i++)
+            {
+               for (int j = 0; j < m; j++)
+               {
+                  matrixL1[adressR + i, adressC + j] = matrixL2[i, j];
+               }
+            }
+
+            TMatrix mat = Utilites.MatrixLToTMatrix(matrixL1);
+
+            result = Entry.Create(mat.ToTerms());
             return true;
          }
 
