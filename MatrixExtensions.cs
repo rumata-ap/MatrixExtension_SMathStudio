@@ -303,7 +303,7 @@ namespace MatrixExtensions
             catch
             {
                tmp1 = Computation.NumericCalculation(arg2, context);
-               m = new TMatrix(0);
+               m = new TMatrix(new TNumber[,]{ });
                m[0, 0] = tmp1;
             }
 
