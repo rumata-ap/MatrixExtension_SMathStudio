@@ -231,8 +231,8 @@ namespace MatrixExtensions
             TNumber tmp = Computation.NumericCalculation(arg1, context);
 
             List<string> vector = new List<string>(Utilites.EntryMatrix2ArrStr(tmp.obj));
-            vector.RemoveAt(vector.Count - 1);
-            vector.RemoveAt(vector.Count - 1);
+            //vector.RemoveAt(vector.Count - 1);
+            //vector.RemoveAt(vector.Count - 1);
             List<string> distinct = vector.Distinct().ToList();
 
             List<Term> answer = new List<Term>();

@@ -16,9 +16,18 @@ namespace MatrixExtensions
 
       internal static string[] EntryMatrix2ArrStr(BaseEntry matrix)
       {
-         string source = matrix.ToString();
-         source = source.Trim(new char[] { 'm', 'a', 't', '(', ')' });
-         return source.Split(',');
+         TMatrix mt = matrix as TMatrix;
+         //int n = mt.unit.GetLength(0);
+         //int m = mt.unit.GetLength(0);
+         List<string> mts = new List<string>(mt.Length());
+         foreach (var item in mt.unit)
+         {
+            mts.Add(item.obj.ToString());
+         }
+         //string source = matrix.ToString();
+         //source = source.Trim(new char[] { 'm', 'a', 't', '(', ')' });
+         //return source.Split(',','\n');
+         return mts.ToArray();
       }
 
       internal static double[] EntryVec2Arr(Entry vector)
